@@ -8,10 +8,7 @@ orderRouter.post("/place-cod", authUser, placeOrderCOD);
 orderRouter.get("/user/:userId", authUser, getOrdersByUserId);
 orderRouter.get("/all", getAllOrders);
 
-orderRouter.post("/stripe", authUser, placeOrderStripe
-
-
-);
+orderRouter.post("/stripe", authUser, placeOrderStripe);
 
 export default orderRouter;
 
