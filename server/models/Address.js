@@ -1,4 +1,4 @@
-import e from "express";
+
 import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema( {
@@ -13,9 +13,6 @@ const addressSchema = new mongoose.Schema( {
     country: { type: String, required: true },
     pincode: { type: Number, required: true },
     phone: { type: String, required: true },
-
-
-
 
    })
 

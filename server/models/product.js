@@ -2,10 +2,10 @@
 
 import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema(
+const ProductSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    description: { type: Array, required: true, unique: true },
+  description: { type: String, required: true },
     price: { type: Number, required: true },
      Offerprice: { type: Number, required: true },
     image: { type: Array, required: true },
@@ -15,8 +15,6 @@ const productSchema = new mongoose.Schema(
   },
   {timestamps: true, versionKey: false} // Disable versionKey
 );
+const Product =  mongoose.model("Product", ProductSchema);
 
-// ✅ Always capitalize model names ("User")
-const product = mongoose.models.User || mongoose.model("product", productSchema);
-
-export default product;
+export default Product;
