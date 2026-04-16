@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 // =================== REGISTER ===================
 export const register = async (req, res) => {
-   console.log("REGISTER ROUTE HIT");
+  
   try {
     const { name, email, password } = req.body;
 
