@@ -1,20 +1,26 @@
 import express from "express";
-import { placeOrderCOD, getOrdersByUserId, getAllOrders } from "../configs/controller/orderController.js";
+import { 
+  placeOrderCOD, 
+  getOrdersByUserId, 
+  getAllOrders,
+
+} from "../configs/controller/orderController.js";
+
+import { placeOrderRazorpay, verifyRazorpay } from "../configs/controller/orderController.js";
+
 import authUser from "../middlewares/authUser.js";
 
 const orderRouter = express.Router();
 
-orderRouter.post("/place-cod", authUser, placeOrderCOD);
+orderRouter.post("/cod", authUser, placeOrderCOD);
 orderRouter.get("/user/:userId", authUser, getOrdersByUserId);
 orderRouter.get("/all", getAllOrders);
 
-orderRouter.post("/stripe", authUser);
+
+orderRouter.post("/online", authUser, placeOrderRazorpay);
+orderRouter.post("/verify", authUser, verifyRazorpay);
 
 export default orderRouter;
-
-
-
-
 
 
 

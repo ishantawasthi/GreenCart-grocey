@@ -3,6 +3,10 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectDB from './db.js'; // Keep extension .js in ESM
 import dotenv from 'dotenv';
+
+dotenv.config();
+
+
 import userRouter from './Routes/userRoute.js';
 import sellerRouter from './Routes/sellerRoute.js';
 import connectCloudinary from './configs/cloudinary.js';
@@ -11,7 +15,7 @@ import cartRouter from './Routes/cartRoute.js';
 import addressRouter from './Routes/AddressRoute.js';
 import orderRouter from './Routes/orderRoute.js';
 
-dotenv.config();
+
 
 const app = express();   // ✅ You missed this
 const PORT = process.env.PORT || 3000;  // ✅ Declare PORT (use .env or fallback)
@@ -24,6 +28,7 @@ const allowedOrigins = ['http://localhost:5173'];
 // Connect to MongoDB + Cloudinary
 connectDB();
 connectCloudinary();
+
 
 // Middlewares
 app.use(express.json());
