@@ -10,7 +10,7 @@ import { addAddress ,getAddress} from '../configs/controller/AddressController.j
 
 addressRouter.post('/add',authUser,addAddress);
 
-addressRouter.post('/get',authUser, getAddress);
+addressRouter.get('/get',authUser, getAddress);
 
 
 export default addressRouter;

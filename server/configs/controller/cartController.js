@@ -3,7 +3,7 @@ import User from "../../models/User.js";
 // Update user cart data
 export const updateCart = async (req, res) => {
   try {
-    const userId = req.user.id;  // safer than req.body.userId
+   const userId = req.user.id;  // safer than req.body.userId
     const { cartItems } = req.body;
 
     if (!cartItems || !Array.isArray(cartItems)) {
