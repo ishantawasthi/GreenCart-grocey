@@ -1,12 +1,9 @@
-import User from "../../models/User.js";
-
-// Update user cart data
 export const updateCart = async (req, res) => {
   try {
-   const userId = req.user.id;  // safer than req.body.userId
+    const userId = req.userId; // ✅ fixed
     const { cartItems } = req.body;
 
-    if (!cartItems || !Array.isArray(cartItems)) {
+    if (!cartItems || typeof cartItems !== "object") { // ✅ fixed
       return res.status(400).json({
         success: false,
         message: "Invalid cart data",
@@ -31,7 +28,6 @@ export const updateCart = async (req, res) => {
       message: "Cart updated successfully",
       cartItems: updatedUser.cartItems,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

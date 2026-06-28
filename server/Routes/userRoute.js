@@ -8,7 +8,7 @@ userRouter.post('/register', register);
 
 userRouter.post('/login', login);
 
-userRouter.post('/isAuth', authUser,isAuth);
+userRouter.get('/isAuth', authUser, isAuth);
 
 userRouter.get('/logout', authUser,logout);
 

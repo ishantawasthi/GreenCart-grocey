@@ -18,7 +18,7 @@ import orderRouter from './Routes/orderRoute.js';
 
 
 const app = express();   // ✅ You missed this
-const PORT = process.env.PORT || 3000;  // ✅ Declare PORT (use .env or fallback)
+const PORT = process.env.PORT || 5000;  // ✅ Declare PORT (use .env or fallback)
 
 
 
