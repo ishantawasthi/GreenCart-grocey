@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect ,useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
 
 axios.defaults.withCredentials=true;
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"; // ✅ Set base URL for axios  
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"; // ✅ Set base URL for axios  
 
 
 // ✅ Context
@@ -23,14 +23,14 @@ export const AppContextProvider = ({ children }) => {
 
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
-  const [searchQuery, setSearhQuery] = useState(""); // ✅ make it a string
+const [searchQuery, setSearchQuery] = useState(""); // ✅ fixed
 
 
 // fetch seller  status
   useEffect(() => {
     const fetchSellerStatus = async () => {
       try {
-        const { data } = await axios.get("/api/seller/status");
+        const { data } = await axios.get("/api/seller/is-auth");
         setIsSeller(data.isSeller);
       } catch (error) {
         console.error("Error fetching seller status:", error);
@@ -40,11 +40,33 @@ export const AppContextProvider = ({ children }) => {
     fetchSellerStatus();
   }, []);
  
+ 
+   const isInitialMount = useRef(true);
+
+// ✅ Sync cart to backend whenever it changes (skip very first render)
+useEffect(() => {
+  if (isInitialMount.current) {
+    isInitialMount.current = false;
+    return;
+  }
+  if (!user) return; // guest user ke liye sync na kare
+
+  const syncCart = async () => {
+    try {
+      await axios.post("/api/cart/update", { cartItems });
+    } catch (error) {
+      console.error("Error syncing cart:", error);
+    }
+  };
+
+  syncCart();
+}, [cartItems, user]);
+
 
   // fetch user auth status ,user data cart items
   const fetchUser = async () => {
     try {
-      const { data } = await axios.get("/api/user/auth");
+      const { data } = await axios.get("/api/user/isAuth");
       if (data.success) {
         setUser(data.user);
         setCartItems(data.cartItems || {});
@@ -145,7 +167,7 @@ export const AppContextProvider = ({ children }) => {
     removeFromCart,
     cartItems,
     searchQuery,
-    setSearhQuery,
+    setSearchQuery,
     getCartItemCount,
     getCartTotalPrice, 
     axios, // ✅ Expose axios for API calls
