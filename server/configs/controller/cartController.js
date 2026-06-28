@@ -1,3 +1,6 @@
+import User from "../../models/User.js";
+
+
 export const updateCart = async (req, res) => {
   try {
     const userId = req.userId; // ✅ fixed

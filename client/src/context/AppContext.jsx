@@ -64,20 +64,20 @@ useEffect(() => {
 
 
   // fetch user auth status ,user data cart items
-  const fetchUser = async () => {
-    try {
-      const { data } = await axios.get("/api/user/isAuth");
-      if (data.success) {
-        setUser(data.user);
-        setCartItems(data.cartItems || {});
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Error fetching user:", error);
+const fetchUser = async () => {
+  try {
+    const { data } = await axios.get("/api/user/isAuth");
+    if (data.success) {
+      setUser(data.user);
+      setCartItems(data.user.cartItems || {}); // ✅ fixed path
+    } else {
       setUser(null);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    setUser(null);
+  }
+};
 
 
 
