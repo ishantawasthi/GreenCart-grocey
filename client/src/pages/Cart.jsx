@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import assets, { dummyAddress } from "../assets/assets";
+import assets from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -11,14 +11,23 @@ const Cart = () => {
     updateCartItem,
     currency,
     getCartTotalPrice,
+      addresses,
+       deleteAddress, // ✅ add
   } = useAppContext();
 
   const navigate = useNavigate();
 
   const [cartArray, setCartArray] = useState([]);
-  const [address] = useState(dummyAddress);
+const [selectedAddress, setSelectedAddress] = useState(null);
+
+   useEffect(() => {
+  if (addresses.length > 0 && !selectedAddress) {
+    setSelectedAddress(addresses[0]);
+  }
+}, [addresses, selectedAddress]); // ✅ selectedAddress bhi dependency mein
+
   const [showAddress, setShowAddress] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
+
   const [paymentMethod, setPaymentMethod] = useState("COD");
 
   const getCart = () => {
@@ -183,9 +192,9 @@ const Cart = () => {
           <p className="text-sm font-medium uppercase">Delivery Address</p>
           <div className="relative flex justify-between items-start mt-2">
             <p className="text-gray-500">
-              {selectedAddress
-                ? `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.country}`
-                : "No address found"}
+            {selectedAddress
+  ? `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}, ${selectedAddress.country}`
+  : "No address found"}
             </p>
             <button
               onClick={() => setShowAddress(!showAddress)}
@@ -195,27 +204,52 @@ const Cart = () => {
             </button>
 
             {showAddress && (
-              <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                {address.map((addr, idx) => (
-                  <p
-                    key={idx}
-                    onClick={() => {
-                      setSelectedAddress(addr);
-                      setShowAddress(false);
-                    }}
-                    className="text-gray-500 p-2 hover:bg-gray-100"
-                  >
-                    {addr.street}, {addr.city}, {addr.state}, {addr.country}
-                  </p>
-                ))}
-                <p
-                  onClick={() => navigate("/add-address")}
-                  className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10"
-                >
-                  Add address
-                </p>
-              </div>
-            )}
+  <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full z-10">
+    {addresses.map((addr, idx) => (
+      <div
+        key={idx}
+        className="flex items-center justify-between p-2 hover:bg-gray-100 text-gray-500"
+      >
+        <p
+          onClick={() => {
+            setSelectedAddress(addr);
+            setShowAddress(false);
+          }}
+          className="cursor-pointer flex-1"
+        >
+          {addr.street}, {addr.city}, {addr.state} - {addr.pincode}, {addr.country}
+        </p>
+        <div className="flex gap-2 ml-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => navigate("/add-address", { state: { address: addr } })}
+            className="text-primary text-xs hover:underline"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              await deleteAddress(addr._id);
+              if (selectedAddress?._id === addr._id) {
+                setSelectedAddress(null); // reset if deleted address was selected
+              }
+            }}
+            className="text-red-500 text-xs hover:underline"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+    <p
+      onClick={() => navigate("/add-address")}
+      className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10"
+    >
+      Add address
+    </p>
+  </div>
+)}
           </div>
 
           {/* Payment Method */}

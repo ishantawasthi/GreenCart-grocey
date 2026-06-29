@@ -20,11 +20,37 @@ export const AppContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isSeller, setIsSeller] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
-
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
-const [searchQuery, setSearchQuery] = useState(""); // ✅ fixed
+  const [searchQuery, setSearchQuery] = useState(""); // ✅ fixed
+ const [addresses, setAddresses] = useState([]);
 
+
+
+  const fetchAddress = async () => {
+  try {
+    const { data } = await axios.get("/api/address/get");
+    if (data.success) {
+      setAddresses(data.addresses);
+    }
+  } catch (error) {
+    console.error("Error fetching address:", error);
+  }
+};
+
+const deleteAddress = async (addressId) => {
+  try {
+   const { data } = await axios.delete(`/api/address/delete/${addressId}`); // ✅ fixed
+
+    if (data.success) {
+      setAddresses((prev) =>
+        prev.filter((addr) => addr._id !== addressId)
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // fetch seller  status
   useEffect(() => {
@@ -148,11 +174,15 @@ const fetchUser = async () => {
   useEffect(() => {
     fetchUser(); // Fetch user data and cart items
     fetchProduct();
-    
+      fetchAddress(); // ✅ add this
+     
   }, []);
 
   // ✅ Context value
   const value = {
+     addresses,
+   fetchAddress,
+     deleteAddress, // ✅ add this
     navigate,
     user,
     setUser,
