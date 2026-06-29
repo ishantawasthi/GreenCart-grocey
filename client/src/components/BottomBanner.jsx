@@ -11,7 +11,7 @@ const BottomBanner = () => {
        className='w-full md:hidden' />
      
 
-       <div className='absolute inset-0 flex flex-col items-center md:items-end md:justify-center pt-16 md:pt-0 md:pr-24'>
+      <div className='md:absolute md:inset-0 flex flex-col items-center md:items-end md:justify-center pt-6 md:pt-0 md:pr-24'>
                <div>
                 <h1 className='text-2xl md:text-3xl font-semibold text-primary'>Why We Are The Best?</h1>
                 {features.map((feature, index) => (

@@ -8,12 +8,12 @@ const MainBanner = () => {
     <div  className='relative'>
         <img src={assets.main_banner_bg} className='w-full hidden md:block' alt="banner" />
          <img src={assets.main_banner_bg_sm} className='w-full  md:hidden' alt="banner" />
-              <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center
-               pb-24 md:pb-0 px-4 md:px-18 lg:px-24' >
-                <h1  
-                  className='text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left 
-                max-w-[20rem] md:max-w-[23rem] lg:max-w-[34rem] leading-tight lg:leading-[3.5rem]'
-                >Freshness You Can Trust,Savings You will Love!</h1>
+             <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center
+   pb-28 md:pb-0 px-4 md:px-18 lg:px-24' >
+    <h1  
+      className='text-2xl md:text-4xl lg:text-5xl font-bold text-center md:text-left 
+    max-w-[20rem] md:max-w-[23rem] lg:max-w-[34rem] leading-snug lg:leading-[3.5rem]'
+    >Freshness You Can Trust,Savings You will Love!</h1>
               
 
               <div className='flex items-center mt-6 front-medium' >

@@ -113,8 +113,7 @@ const Navbar = () => {
  
 
       {/* ✅ Mobile Menu */}
-      <div className={`${open ? 'flex' : 'hidden'} sm:hidden absolute top-[60px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm`}>
-        <NavLink to='/' onClick={() => setOpen(false)}>Home</NavLink>
+      <div className={`${open ? 'flex' : 'hidden'} sm:hidden absolute top-[60px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm z-50`}>
         <NavLink to='/products' onClick={() => setOpen(false)}>All Product</NavLink>
         {user && <NavLink to='/myorders' onClick={() => setOpen(false)}>My Orders</NavLink>}
         <NavLink to='/' onClick={() => setOpen(false)}>Contact</NavLink>

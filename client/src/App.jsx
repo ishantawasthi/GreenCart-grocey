@@ -39,7 +39,7 @@ function App() {
           <Route path="/products/:category/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/add-address" element={<AddAddress />} />
-          <Route path="/myorders" element={<MyOrders />} />
+     <Route path="/my-orders" element={<MyOrders />} />
 
           {/* ✅ Seller Login Route */}
           <Route path="/seller/login" element={<SellerLogin />} />

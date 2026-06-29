@@ -38,6 +38,12 @@ export const AppContextProvider = ({ children }) => {
   }
 };
 
+  const clearCart = async () => {
+  setCartItems({});
+  await axios.post("/api/cart/update", { cartItems: {} });
+};
+
+
 const deleteAddress = async (addressId) => {
   try {
    const { data } = await axios.delete(`/api/address/delete/${addressId}`); // ✅ fixed
@@ -200,7 +206,9 @@ const fetchUser = async () => {
     setSearchQuery,
     getCartItemCount,
     getCartTotalPrice, 
-    axios, // ✅ Expose axios for API calls
+    axios,
+    clearCart,
+   
 
   };
 

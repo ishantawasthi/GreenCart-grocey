@@ -13,7 +13,8 @@ const authUser = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.userId = decoded.id; // ✅ isAuth controller isi naam se padhta hai
+    req.user = { id: decoded.id };   // ✅ ONLY THIS LINE CHANGED (was req.userId = decoded.id)
+    req.userId = decoded.id;
 
     next();
   } catch (error) {
