@@ -113,36 +113,18 @@ export const verifyRazorpay = async (req, res) => {
 
 
 // Place order with Cash on Delivery
-
 export const placeOrderCOD = async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ from token
+    const userId = req.user.id;
     const { items, address } = req.body;
 
     if (!items || !address) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid order data",
-      });
+      return res.status(400).json({ success: false, message: "Invalid order data" });
     }
 
-    let totalAmount = 0;
-
-    for (const item of items) {
-      const product = await Product.findById(item.productId);
-
-      if (!product) {
-        return res.status(404).json({
-          success: false,
-          message: `Product not found: ${item.productId}`,
-        });
-      }
-
-      totalAmount += product.price * item.quantity;
-    }
-
-    // 2% tax
-    totalAmount += Math.floor(totalAmount * 0.02);
+    // ✅ Skip DB product lookup — use amount from frontend
+    let totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    totalAmount += Math.floor(totalAmount * 0.02); // 2% tax
 
     await Order.create({
       userId,
@@ -153,20 +135,13 @@ export const placeOrderCOD = async (req, res) => {
       isPaid: false,
     });
 
-    res.json({
-      success: true,
-      message: "Order placed successfully",
-    });
+    res.json({ success: true, message: "Order placed successfully" });
 
   } catch (error) {
-    console.log(error); // 🔥 always log
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
-
 // Get orders by userId
 export const getOrdersByUserId = async (req, res) => {
   try {
@@ -180,21 +155,13 @@ export const getOrdersByUserId = async (req, res) => {
       userId,
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
-      .populate("items.productId")
+      // .populate("items.productId") // ❌ remove this — productId is now a String
       .sort({ createdAt: -1 });
 
-    res.json({
-      success: true,
-      orders,
-      message: "Orders retrieved successfully",
-    });
+    res.json({ success: true, orders, message: "Orders retrieved successfully" });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error retrieving orders",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Error retrieving orders", error: error.message });
   }
 };
 
@@ -204,7 +171,7 @@ export const getAllOrders = async (req, res) => {
     const orders = await Order.find({
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
-      .populate("items.productId")
+     
       .sort({ createdAt: -1 });
 
     res.json({

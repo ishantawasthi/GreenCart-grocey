@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import assets from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import API from "../api";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const {
@@ -12,7 +14,12 @@ const Cart = () => {
     currency,
     getCartTotalPrice,
       addresses,
-       deleteAddress, // ✅ add
+       deleteAddress, 
+        token,      // ✅ add this
+         userId,     // ✅ add this (or however your context exposes the user id)//
+           axios ,
+           clearCart 
+  
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -50,10 +57,39 @@ const [selectedAddress, setSelectedAddress] = useState(null);
     }
   }, [products, cartItems]);
 
-  const placeOrder = async () => {
-    console.log("Placing order...");
-  };
+const placeOrder = async () => {
+  try {
+    if (!selectedAddress) {
+      alert("Please select a delivery address.");
+      return;
+    }
 
+    const orderItems = cartArray.map((item) => ({
+      productId: item._id,
+      quantity: item.quantity,
+        price: item.offerPrice,  // ✅ add this
+    }));
+
+    if (paymentMethod === "COD") {
+  const { data } = await axios.post("/api/order/cod", {
+    items: orderItems,
+    address: selectedAddress._id,
+  });
+
+  if (data.success) {
+    await clearCart(); // ✅ clears cart
+    toast.success("Order placed successfully!");
+    navigate("/my-orders");
+  } else {
+    toast.error(data.message);
+  }
+}
+
+  } catch (error) {
+    console.error("Place order error:", error);
+    toast.error("Something went wrong. Please try again.");
+  }
+};
   // ✅ If cart empty
   if (products.length === 0 || Object.keys(cartItems).length === 0) {
     return (
