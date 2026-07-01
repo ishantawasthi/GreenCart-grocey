@@ -115,7 +115,7 @@ export const verifyRazorpay = async (req, res) => {
 // Place order with Cash on Delivery
 export const placeOrderCOD = async (req, res) => {
   try {
-   const userId = req.userId;
+   const userId = req.userId; // ✅
     const { items, address } = req.body;
 
     if (!items || !address) {
@@ -145,15 +145,30 @@ export const placeOrderCOD = async (req, res) => {
 // Get orders by userId
 export const getOrdersByUserId = async (req, res) => {
   try {
-    const { userId } = req.params; // ✅ params se aa raha hai
-    const orders = await Order.find({
-      userId, // ✅ ye string comparison hai
-      $or: [{ paymentType: "COD" }, { isPaid: true }],
-    })
-    .populate("items.productId")
-    .sort({ createdAt: -1 });
+    const { userId } = req.params;
 
-    res.json({ success: true, orders });
+    const orders = await Order.find({
+      userId,
+      $or: [{ paymentType: "COD" }, { isPaid: true }],
+    }).sort({ createdAt: -1 });
+
+    // Manual product lookup
+    const populatedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const items = await Promise.all(
+          order.items.map(async (item) => {
+            const product = await Product.findById(item.productId);
+            return {
+              productId: product || null,
+              quantity: item.quantity,
+            };
+          })
+        );
+        return { ...order.toObject(), items };
+      })
+    );
+
+    res.json({ success: true, orders: populatedOrders });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -164,20 +179,25 @@ export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({
       $or: [{ paymentType: "COD" }, { isPaid: true }],
-    })
-     
-      .sort({ createdAt: -1 });
+    }).sort({ createdAt: -1 });
 
-    res.json({
-      success: true,
-      orders,
-      message: "All orders retrieved successfully",
-    });
+    const populatedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const items = await Promise.all(
+          order.items.map(async (item) => {
+            const product = await Product.findById(item.productId);
+            return {
+              productId: product || null,
+              quantity: item.quantity,
+            };
+          })
+        );
+        return { ...order.toObject(), items };
+      })
+    );
+
+    res.json({ success: true, orders: populatedOrders });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error retrieving all orders",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
