@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { createContext, useState, useContext, useEffect ,useRef} from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from "../assets/assets";
+
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -27,14 +27,14 @@ export const AppContextProvider = ({ children }) => {
 
 
 
-  const fetchAddress = async () => {
+  const fetchProduct = async () => {
   try {
-    const { data } = await axios.get("/api/address/get");
+    const { data } = await axios.get("/api/product/list");
     if (data.success) {
-      setAddresses(data.addresses);
+      setProducts(data.products);
     }
   } catch (error) {
-    console.error("Error fetching address:", error);
+    console.error("Error fetching products:", error);
   }
 };
 

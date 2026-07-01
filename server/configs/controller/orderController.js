@@ -152,16 +152,17 @@ export const getOrdersByUserId = async (req, res) => {
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     }).sort({ createdAt: -1 });
 
-    // Manual product lookup
     const populatedOrders = await Promise.all(
       orders.map(async (order) => {
         const items = await Promise.all(
           order.items.map(async (item) => {
-            const product = await Product.findById(item.productId);
-            return {
-              productId: product || null,
-              quantity: item.quantity,
-            };
+            let product = null;
+            try {
+              product = await Product.findOne({ _id: item.productId });
+            } catch (e) {
+              product = null;
+            }
+            return { productId: product, quantity: item.quantity };
           })
         );
         return { ...order.toObject(), items };
@@ -174,7 +175,6 @@ export const getOrdersByUserId = async (req, res) => {
   }
 };
 
-// Get all orders (for seller/admin)
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({
@@ -185,11 +185,13 @@ export const getAllOrders = async (req, res) => {
       orders.map(async (order) => {
         const items = await Promise.all(
           order.items.map(async (item) => {
-            const product = await Product.findById(item.productId);
-            return {
-              productId: product || null,
-              quantity: item.quantity,
-            };
+            let product = null;
+            try {
+              product = await Product.findOne({ _id: item.productId });
+            } catch (e) {
+              product = null;
+            }
+            return { productId: product, quantity: item.quantity };
           })
         );
         return { ...order.toObject(), items };
