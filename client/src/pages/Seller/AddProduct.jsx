@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import assets from "../../assets/assets";
-import Categories from "../../components/Categories";
+import { categories } from "../../assets/assets"; // ✅ array import
 
 const AddProduct = () => {
   const [files, setFiles] = useState([]);
@@ -105,9 +105,9 @@ const AddProduct = () => {
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
           >
             <option value="">Select Category</option>
-            {Categories.map((item, idx) => (
+            {categories.map((item, idx) => (
               <option key={idx} value={item.path}>
-                {item.name}
+                {item.text}
               </option>
             ))}
           </select>
