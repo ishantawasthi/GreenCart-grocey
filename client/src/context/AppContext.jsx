@@ -111,13 +111,6 @@ const fetchUser = async () => {
   }
 };
 
-
-
-  // ✅ Fetch all products
-  const fetchProduct = async () => {
-    setProducts(dummyProducts); // In future, can be API
-  };
-
   // ✅ Add product to cart
   const addToCart = (itemId) => {
     setCartItems((prevCart) => {
