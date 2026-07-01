@@ -115,7 +115,7 @@ export const verifyRazorpay = async (req, res) => {
 // Place order with Cash on Delivery
 export const placeOrderCOD = async (req, res) => {
   try {
-    const userId = req.userId;
+   const userId = req.userId;
     const { items, address } = req.body;
 
     if (!items || !address) {
