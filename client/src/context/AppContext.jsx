@@ -94,6 +94,17 @@ useEffect(() => {
   syncCart();
 }, [cartItems, user]);
 
+const fetchAddress = async () => {
+  try {
+    const { data } = await axios.get("/api/address/get");
+    if (data.success) {
+      setAddresses(data.addresses);
+    }
+  } catch (error) {
+    console.error("Error fetching address:", error);
+  }
+};
+
 
   // fetch user auth status ,user data cart items
 const fetchUser = async () => {
