@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
@@ -31,11 +31,11 @@ const SellerLogin = () => {
   }
   }
 
-  // ✅ If already logged in, redirect to seller dashboard directly
+  useEffect(() => {
   if (isSeller) {
     navigate("/seller");
-    return null; // Prevent rendering login form again
   }
+}, [isSeller]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
