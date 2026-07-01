@@ -20,7 +20,7 @@ import OrderProduct from "./pages/Seller/OrderProduct";
 
 function App() {
   const IsSellerPath = useLocation().pathname.includes("seller");
-  const { showUserLogin, IsSeller } = useAppContext();
+const { showUserLogin, isSeller } = useAppContext(); // ✅ lowercase i
 
   return (
     <div>
@@ -48,7 +48,7 @@ function App() {
           <Route
             path="/seller/*"
             element={
-              IsSeller ? (
+              isSeller ? (
                 <SellerLayout />
               ) : (
                 <Navigate to="/seller/login" replace />

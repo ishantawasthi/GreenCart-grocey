@@ -10,32 +10,29 @@ const SellerLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmitHandler = async (event) => {
+ const onSubmitHandler = async (event) => {
   try {
     event.preventDefault();
-    const {data}=await axios.post('/api/seller/login', {
-      email,  password
-    }); 
-   if(data.success) {
+    const { data } = await axios.post('/api/seller/login', { email, password });
+    if (data.success) {
       setIsSeller(true);
       toast.success("Login successful");
       navigate("/seller");
-    }else{
+    } else {
       toast.error(data.message || "Login failed");
-      setIsSeller(false);
+      // ❌ setIsSeller(false) mat karo — already false hai
     }
-
   } catch (error) {
     toast.error(error.response?.data?.message || "Login failed");
-    setIsSeller(false);
+    // ❌ setIsSeller(false) mat karo
   }
-  }
+};
 
-  useEffect(() => {
+useEffect(() => {
   if (isSeller) {
     navigate("/seller");
   }
-}, [isSeller]);
+}, [isSeller, navigate]); // ✅ navigate bhi dependency mein
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
