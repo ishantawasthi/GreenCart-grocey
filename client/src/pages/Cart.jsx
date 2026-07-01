@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import assets from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+
 import toast from "react-hot-toast";
 
 const Cart = () => {
@@ -79,7 +79,7 @@ const placeOrder = async () => {
   if (data.success) {
     await clearCart(); // ✅ clears cart
     toast.success("Order placed successfully!");
-    navigate("/my-orders");
+  navigate("/myorders");  // ✅
   } else {
     toast.error(data.message);
   }

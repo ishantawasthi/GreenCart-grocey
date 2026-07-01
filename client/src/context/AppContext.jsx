@@ -207,7 +207,7 @@ const fetchUser = async () => {
     getCartItemCount,
     getCartTotalPrice, 
     axios,
-    clearCart,
+    clearCart
    
 
   };
