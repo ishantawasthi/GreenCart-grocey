@@ -145,23 +145,17 @@ export const placeOrderCOD = async (req, res) => {
 // Get orders by userId
 export const getOrdersByUserId = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    if (!userId) {
-      return res.status(400).json({ success: false, message: "User ID is required" });
-    }
-
+    const { userId } = req.params; // ✅ params se aa raha hai
     const orders = await Order.find({
-      userId,
+      userId, // ✅ ye string comparison hai
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
-      // .populate("items.productId") // ❌ remove this — productId is now a String
-      .sort({ createdAt: -1 });
+    .populate("items.productId")
+    .sort({ createdAt: -1 });
 
-    res.json({ success: true, orders, message: "Orders retrieved successfully" });
-
+    res.json({ success: true, orders });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error retrieving orders", error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

@@ -60,34 +60,33 @@ const [selectedAddress, setSelectedAddress] = useState(null);
 const placeOrder = async () => {
   try {
     if (!selectedAddress) {
-      alert("Please select a delivery address.");
+      toast.error("Please select a delivery address.");
       return;
     }
 
     const orderItems = cartArray.map((item) => ({
       productId: item._id,
       quantity: item.quantity,
-        price: item.offerPrice,  // ✅ add this
     }));
 
     if (paymentMethod === "COD") {
-  const { data } = await axios.post("/api/order/cod", {
-    items: orderItems,
-    address: selectedAddress._id,
-  });
+      const { data } = await axios.post("/api/order/cod", {
+        items: orderItems,
+        address: selectedAddress._id,
+      });
 
-  if (data.success) {
-    await clearCart(); // ✅ clears cart
-    toast.success("Order placed successfully!");
-  navigate("/myorders");  // ✅
-  } else {
-    toast.error(data.message);
-  }
-}
-
+      if (data.success) {
+        toast.success("Order placed successfully!");
+        setCartItems({}); // ✅ clearCart ki jagah direct state clear
+        await axios.post("/api/cart/update", { cartItems: {} });
+        navigate("/myorders"); // ✅ 
+      } else {
+        toast.error(data.message || "Order failed");
+      }
+    }
   } catch (error) {
     console.error("Place order error:", error);
-    toast.error("Something went wrong. Please try again.");
+    toast.error("Something went wrong.");
   }
 };
   // ✅ If cart empty

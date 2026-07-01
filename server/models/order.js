@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema(
 items: [
   {
     productId: { 
-      type: String,  // ✅ was mongoose.Schema.Types.ObjectId
+      type: mongoose.Schema.Types.ObjectId, // ✅ ObjectId wapas
       ref: "Product",
       required: true 
     },

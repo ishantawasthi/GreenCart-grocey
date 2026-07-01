@@ -5,20 +5,19 @@ const MyOrders = () => {
   const { axios, user, products } = useAppContext(); // ✅ add products
   const [myorders, setMyOrders] = useState([]);
 
-  const fetchOrders = async () => {
-
-    if (!user) return;
-      console.log("Fetching orders for user:", user._id); // 🔥 add
-    try {
-      const { data } = await axios.get(`/api/order/user/${user._id}`);
-       console.log("Orders data:", data); // 🔥 add
-      if (data.success) {
-        setMyOrders(data.orders);
-      }
-    } catch (error) {
-      console.error("Error fetching orders:", error);
+ const fetchOrders = async () => {
+  if (!user) return;
+  try {
+    const { data } = await axios.get(`/api/order/user/${user._id}`);
+    if (data.success) {
+      setMyOrders(data.orders);
+    } else {
+      console.log("Orders fetch failed:", data.message);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+  }
+};
 
   useEffect(() => {
     fetchOrders();
