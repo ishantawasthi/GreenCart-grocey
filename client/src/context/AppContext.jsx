@@ -180,7 +180,7 @@ const fetchUser = async () => {
   // ✅ Context value
   const value = {
      addresses,
-   fetchAddress,
+    fetchAddress,
      deleteAddress, // ✅ add this
     navigate,
     user,
