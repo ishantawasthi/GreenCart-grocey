@@ -10,11 +10,12 @@ export const sellerLogin = async (req, res) => {
     if (email === process.env.SELLER_EMAIL && password === process.env.SELLER_PASSWORD) {
       const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-      res.cookie("sellerToken", token, {
-        httpOnly: true,
-        secure: false, // set true in production with HTTPS
-        sameSite: "lax",
-      });
+     res.cookie("sellerToken", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000, // 1 hour
+});
 
       return res.json({
         success: true,
@@ -46,9 +47,9 @@ export const isSellerAuth = (req, res) => {
 
 // ---------------- SELLER LOGOUT ----------------
 export const sellerlogout = (req, res) => {
-  res.clearCookie("sellerToken");
-  return res.json({
-    success: true,
-    message: "Seller logged out successfully",
-  });
+res.clearCookie("sellerToken", {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+});
 };
