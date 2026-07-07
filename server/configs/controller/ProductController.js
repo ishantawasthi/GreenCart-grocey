@@ -1,15 +1,13 @@
-import product from "../../models/product.js";
 import { v2 as cloudinary } from "cloudinary";
+import Product from "../../models/product.js";
+
 
 export const addProduct = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
-
     const images = req.files || [];
 
     if (images.length === 0) {
-      return res.status(400).json({ message: "Images required" });
+      return res.status(400).json({ success: false, message: "Images required" });
     }
 
     const imagesURL = await Promise.all(
@@ -21,13 +19,13 @@ export const addProduct = async (req, res) => {
       })
     );
 
-    await product.create({
+    await Product.create({ // ✅ capital P
       name: req.body.name,
-      description: req.body.description, // String fix
+      description: JSON.parse(req.body.description || "[]"),
       price: Number(req.body.price),
-      Offerprice: Number(req.body.Offerprice),
+      offerPrice: Number(req.body.offerPrice), // ✅ lowercase p
       category: req.body.category,
-      inStock: req.body.inStock === "true",
+      inStock: true,
       image: imagesURL
     });
 
@@ -38,7 +36,6 @@ export const addProduct = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
   //Get product : /api/product/list
   export const ProductList = async (req, res) => {
        try {
