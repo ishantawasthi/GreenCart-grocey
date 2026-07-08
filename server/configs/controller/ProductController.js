@@ -7,43 +7,44 @@ export const addProduct = async (req, res) => {
   try {
     // Force override any cached config
     
-
-
-
-    const images = req.files || [];
-    if (images.length === 0) {
-      return res.status(400).json({ success: false, message: "Images required" });
-    }
-
-    const imagesURL = await Promise.all(
-      images.map((img) =>
-        new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            { resource_type: "image" },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result.secure_url);
-            }
-          ).end(img.buffer);
-        })
-      )
-    );
-
-    await Product.create({
-      name: req.body.name,
-      description: JSON.parse(req.body.description || "[]"),
-      price: Number(req.body.price),
-      offerPrice: Number(req.body.offerPrice),
-      category: req.body.category,
-      inStock: true,
-      image: imagesURL,
+const imagesURL = await Promise.all(
+  images.map(async (img) => {
+    console.log("Uploading:", {
+      name: img.originalname,
+      size: img.size,
+      type: img.mimetype,
+      hasBuffer: !!img.buffer,
     });
 
-    res.json({ success: true, message: "Product added successfully" });
-  } catch (error) {
-    console.log("ERROR:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: "auto",
+        },
+        (error, result) => {
+          console.log("CLOUDINARY RESULT:", result);
+          console.log("CLOUDINARY ERROR:", error);
+
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        }
+      );
+
+      stream.end(img.buffer);
+    });
+  })
+);
+} catch (error) {
+  console.error("FULL ERROR:", error);
+  console.error("ERROR JSON:", JSON.stringify(error, null, 2));
+
+  return res.status(500).json({
+    success: false,
+    message: error.message,
+    http_code: error.http_code,
+    error,
+  });
+}
 };
 
 export const ProductList = async (req, res) => {
