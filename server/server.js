@@ -32,6 +32,9 @@ const allowedOrigins = [
 connectDB();
 connectCloudinary();
 
+console.log("KEY:", process.env.CLOUDINARY_API_KEY);
+console.log("SECRET:", process.env.CLOUDINARY_API_SECRET);
+
 
 // Middlewares
 app.use(express.json());
