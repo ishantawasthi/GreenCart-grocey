@@ -1,8 +1,8 @@
-
 import dotenv from 'dotenv';
 dotenv.config();
 
 import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -10,8 +10,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-console.log("Config:", cloudinary.config());
+const buffer = fs.readFileSync('./test-image.jpg');
 
-cloudinary.uploader.upload('https://res.cloudinary.com/demo/image/upload/sample.jpg')
-  .then(r => console.log('SUCCESS:', r.secure_url))
-  .catch(e => console.log('FAIL:', e.message));
+new Promise((resolve, reject) => {
+  cloudinary.uploader.upload_stream(
+    { resource_type: "image" },
+    (error, result) => {
+      if (error) reject(error);
+      else resolve(result);
+    }
+  ).end(buffer);
+})
+.then(r => console.log('SUCCESS:', r.secure_url))
+.catch(e => console.log('FAIL:', e.message, e.http_code));

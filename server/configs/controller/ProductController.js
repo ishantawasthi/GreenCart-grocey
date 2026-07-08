@@ -6,14 +6,9 @@ import Product from "../../models/product.js";
 export const addProduct = async (req, res) => {
   try {
     // Force override any cached config
-    delete process.env.CLOUDINARY_URL;
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
+    
 
-    console.log("Using API Key:", cloudinary.config().api_key); // debug
+
 
     const images = req.files || [];
     if (images.length === 0) {
