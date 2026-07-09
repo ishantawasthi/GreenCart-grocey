@@ -5,7 +5,7 @@ import { addProduct, ProductList, ProductById, changeStock } from '../configs/co
 
 const ProductRouter = express.Router();
 
-ProductRouter.post('/add', upload.array("images"), authSeller, addProduct);
+ProductRouter.post('/add', authSeller, upload.array("images", 5), addProduct);
 
 ProductRouter.get('/list', ProductList);
 

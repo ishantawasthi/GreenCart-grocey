@@ -2,49 +2,57 @@ import { v2 as cloudinary } from "cloudinary";
 import Product from "../../models/product.js";
 
 
-
 export const addProduct = async (req, res) => {
   try {
-    // Force override any cached config
-    
-const imagesURL = await Promise.all(
-  images.map(async (img) => {
-    console.log("Uploading:", {
-      name: img.originalname,
-      size: img.size,
-      type: img.mimetype,
-      hasBuffer: !!img.buffer,
+    // Cloudinary config initialize karo
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 
-    return new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: "auto",
-        },
-        (error, result) => {
-          console.log("CLOUDINARY RESULT:", result);
-          console.log("CLOUDINARY ERROR:", error);
+    const files = req.files; // Kyuki upload.array use kiya hai, files milega
+ 
+    console.log("FILES RECEIVED:", files);
 
-          if (error) return reject(error);
-          resolve(result.secure_url);
-        }
-      );
+    if (!files || files.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "No images uploaded. Make sure key name is 'images'" 
+      });
+    }
 
-      stream.end(img.buffer);
+    // Ek array banao uploaded URLs store karne ke liye
+    const imageUrls = [];
+
+    // Saari images ko loop karke Cloudinary pe upload karo (using your preset)
+    for (const file of files) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { resource_type: "image", upload_preset: "greencart" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          }
+        ).end(file.buffer);
+      });
+      imageUrls.push(result);
+    }
+
+    // 🚀 Success Response
+    return res.json({
+      success: true,
+      message: "Images uploaded successfully!",
+      images: imageUrls // Saare uploaded image links mil jayenge
     });
-  })
-);
-} catch (error) {
-  console.error("FULL ERROR:", error);
-  console.error("ERROR JSON:", JSON.stringify(error, null, 2));
 
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-    http_code: error.http_code,
-    error,
-  });
-}
+  } catch (error) {
+    console.log("UPLOAD ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error"
+    });
+  }
 };
 
 export const ProductList = async (req, res) => {
