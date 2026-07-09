@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { createContext, useState, useContext, useEffect ,useRef} from "react";
 import { useNavigate } from "react-router-dom";
+import { dummyProducts } from "../assets/assets";
 
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -28,15 +29,17 @@ export const AppContextProvider = ({ children }) => {
 
 
    
-
-  const fetchProduct = async () => {
+const fetchProduct = async () => {
   try {
     const { data } = await axios.get("/api/product/list");
-    if (data.success) {
+    if (data.success && data.products.length > 0) {
       setProducts(data.products);
+    } else {
+      setProducts(dummyProducts);   // ⚠️ fallback triggered
     }
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error("Error fetching products, using dummy data:", error);
+    setProducts(dummyProducts);     // ⚠️ or this
   }
 };
 

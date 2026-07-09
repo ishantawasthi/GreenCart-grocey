@@ -115,30 +115,25 @@ export const verifyRazorpay = async (req, res) => {
 // Place order with Cash on Delivery
 export const placeOrderCOD = async (req, res) => {
   try {
-   const userId = req.userId; // ✅
+    const userId = req.userId;
     const { items, address } = req.body;
 
-    if (!items || !address) {
+    if (!items || !address || items.length === 0) {
       return res.status(400).json({ success: false, message: "Invalid order data" });
     }
 
-    // ✅ Skip DB product lookup — use amount from frontend
+    // 🛑 Reject if any item is missing a valid productId
+    const invalidItem = items.find(item => !item.productId);
+    if (invalidItem) {
+      return res.status(400).json({ success: false, message: "One or more items are missing a valid product." });
+    }
+
     let totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    totalAmount += Math.floor(totalAmount * 0.02); // 2% tax
+    totalAmount += Math.floor(totalAmount * 0.02);
 
-    await Order.create({
-      userId,
-      items,
-      totalAmount,
-      address,
-      paymentType: "COD",
-      isPaid: false,
-    });
-
+    await Order.create({ userId, items, totalAmount, address, paymentType: "COD", isPaid: false });
     res.json({ success: true, message: "Order placed successfully" });
-
   } catch (error) {
-    console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -158,11 +153,18 @@ export const getOrdersByUserId = async (req, res) => {
           order.items.map(async (item) => {
             let product = null;
             try {
-              product = await Product.findOne({ _id: item.productId });
+              product = await Product.findOne({ _id: item.productId }).lean();
             } catch (e) {
               product = null;
             }
-            return { productId: product, quantity: item.quantity };
+            return {
+              productId: item.productId,
+              quantity: item.quantity,
+              name: product?.name || "Product unavailable",
+              image: product?.image || [],
+              price: product?.price || 0,
+              offerPrice: product?.Offerprice || 0,
+            };
           })
         );
         return { ...order.toObject(), items };
@@ -187,11 +189,18 @@ export const getAllOrders = async (req, res) => {
           order.items.map(async (item) => {
             let product = null;
             try {
-              product = await Product.findOne({ _id: item.productId });
+              product = await Product.findOne({ _id: item.productId }).lean();
             } catch (e) {
               product = null;
             }
-            return { productId: product, quantity: item.quantity };
+            return {
+              productId: item.productId,
+              quantity: item.quantity,
+              name: product?.name || "Product unavailable",
+              image: product?.image || [],
+              price: product?.price || 0,
+              offerPrice: product?.Offerprice || 0,
+            };
           })
         );
         return { ...order.toObject(), items };
@@ -203,3 +212,5 @@ export const getAllOrders = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+

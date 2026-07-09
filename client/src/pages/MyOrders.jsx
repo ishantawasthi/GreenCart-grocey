@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 const MyOrders = () => {
-  const { axios, user, products } = useAppContext(); // ✅ add products
+  const { axios, user } = useAppContext();
   const [myorders, setMyOrders] = useState([]);
 
- const fetchOrders = async () => {
-  if (!user) return;
-  try {
-    const { data } = await axios.get(`/api/order/user/${user._id}`);
-    if (data.success) {
-      setMyOrders(data.orders);
-    } else {
-      console.log("Orders fetch failed:", data.message);
+  const fetchOrders = async () => {
+    if (!user) return;
+    try {
+      const { data } = await axios.get(`/api/order/user/${user._id}`);
+      if (data.success) {
+        setMyOrders(data.orders);
+      } else {
+        console.log("Orders fetch failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
     }
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-  }
-};
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -42,44 +42,37 @@ const MyOrders = () => {
             <span>Total Amount: ₹{order.totalAmount}</span>
           </p>
 
-          {order.items.map((item, idx) => {
-            // ✅ look up product from dummyProducts using string id
-            const product = products.find(p => p._id === item.productId);
-            if (!product) return null;
-
-            return (
-              <div
-                key={idx}
-                className={`relative bg-white text-gray-500/70 
-                  ${order.items.length !== idx + 1 ? "border-b" : ""} 
-                  border-gray-300 flex flex-col md:flex-row md:items-center justify-between 
-                  p-4 py-5 md:gap-16 w-full max-w-4xl`}
-              >
-                <div className='flex items-center mb-4 md:mb-0'>
-                  <div className='bg-primary/10 p-4 rounded-lg'>
-                    <img
-                      src={Array.isArray(product.image) ? product.image[0] : product.image}
-                      alt={product.name}
-                      className='w-16 h-16'
-                    />
-                  </div>
-                  <div className='ml-4'>
-                    <h2 className='text-xl font-medium text-gray-800'>{product.name}</h2>
-                    <p>Category: {product.category}</p>
-                  </div>
+          {order.items.map((item, idx) => (
+            <div
+              key={idx}
+              className={`relative bg-white text-gray-500/70 
+                ${order.items.length !== idx + 1 ? "border-b" : ""} 
+                border-gray-300 flex flex-col md:flex-row md:items-center justify-between 
+                p-4 py-5 md:gap-16 w-full max-w-4xl`}
+            >
+              <div className='flex items-center mb-4 md:mb-0'>
+                <div className='bg-primary/10 p-4 rounded-lg'>
+                  <img
+                    src={Array.isArray(item.image) ? item.image[0] : item.image}
+                    alt={item.name}
+                    className='w-16 h-16'
+                  />
                 </div>
-
-                <div className='flex flex-col justify-center md:ml-8 mb-4 md:mb-0'>
-                  <p>Quantity: {item.quantity || 1}</p>
-                  <p>Status: {order.status}</p>
-                  <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                  <p className='text-primary text-lg font-medium'>
-                    Amount: ₹{(product.offerPrice * item.quantity).toFixed(2)}
-                  </p>
+                <div className='ml-4'>
+                  <h2 className='text-xl font-medium text-gray-800'>{item.name}</h2>
                 </div>
               </div>
-            );
-          })}
+
+              <div className='flex flex-col justify-center md:ml-8 mb-4 md:mb-0'>
+                <p>Quantity: {item.quantity || 1}</p>
+                <p>Status: {order.status}</p>
+                <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                <p className='text-primary text-lg font-medium'>
+                  Amount: ₹{(item.offerPrice * item.quantity).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       ))}
     </div>

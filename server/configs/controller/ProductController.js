@@ -58,6 +58,8 @@ export const addProduct = async (req, res) => {
 export const ProductList = async (req, res) => {
   try {
     const products = await Product.find({}); // ✅ Capital P
+    console.log("🔍 TOTAL PRODUCTS IN DB:", products.length); // ADD THIS
+    
     res.json({ success: true, products });
   } catch (error) {
     console.log(error);

@@ -64,10 +64,11 @@ const placeOrder = async () => {
       return;
     }
 
-    const orderItems = cartArray.map((item) => ({
-      productId: item._id,
-      quantity: item.quantity,
-    }));
+ const orderItems = cartArray.map((item) => ({
+  productId: item._id,
+  quantity: item.quantity,
+  price: item.offerPrice,
+}));
 
     if (paymentMethod === "COD") {
       const { data } = await axios.post("/api/order/cod", {
@@ -76,11 +77,10 @@ const placeOrder = async () => {
       });
 
       if (data.success) {
-        toast.success("Order placed successfully!");
-        setCartItems({}); // ✅ clearCart ki jagah direct state clear
-        await axios.post("/api/cart/update", { cartItems: {} });
-        navigate("/myorders"); // ✅ 
-      } else {
+  toast.success("Order placed successfully!");
+  await clearCart(); // ✅ uses the function already provided by context
+  navigate("/myorders");
+}else {
         toast.error(data.message || "Order failed");
       }
     }
