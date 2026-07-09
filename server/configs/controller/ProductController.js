@@ -29,7 +29,7 @@ export const addProduct = async (req, res) => {
     for (const file of files) {
       const result = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          { resource_type: "image", upload_preset: "greencart" },
+          { resource_type: "image", upload_preset: "greencart" ,cloud_name: "kyj5bmed"},
           (error, result) => {
             if (error) reject(error);
             else resolve(result.secure_url);
